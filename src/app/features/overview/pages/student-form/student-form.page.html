@@ -1,0 +1,25 @@
+<div class="p-fluid">
+  <h2>{{ isEdit() ? 'Edit Student' : 'New Student' }}</h2>
+
+  <div class="field">
+    <label for="name">Name</label>
+    <input pInputText id="name" [(ngModel)]="nameModel" />
+  </div>
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input pInputText id="email" [(ngModel)]="emailModel" />
+  </div>
+
+  <div class="field">
+    <label for="courses">Courses</label>
+    <p-multiSelect [options]="allCourses" [(ngModel)]="coursesModel" />
+  </div>
+
+  <div class="flex gap-2 mt-3">
+    <button pButton type="button" label="Save" (click)="save()"></button>
+    <a pButton type="button" (click)="goToList()" class="p-button-secondary"
+      >Cancel</a
+    >
+  </div>
+</div>

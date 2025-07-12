@@ -1,0 +1,56 @@
+<div class="flex flex-row justify-content-between align-items-center gap-3">
+  <div class="flex flex-row align-items-center gap-3">
+    <h1>Students overview</h1>
+    <p-badge [value]="studentsCount()" badgeSize="xlarge" />
+  </div>
+
+  <p-button label="Add Student" icon="pi pi-plus" (onClick)="goToMakeNew()" />
+</div>
+
+<p-table
+  [value]="students()"
+  [paginator]="true"
+  [rows]="20"
+  emptyMessage="No students available."
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Courses</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-student>
+    <tr>
+      <td>{{ student.name }}</td>
+      <td>{{ student.email }}</td>
+      <td>{{ student.courses.join(', ') }}</td>
+      <td class="flex flex-row gap-3">
+        <p-button
+          icon="pi pi-eye"
+          severity="info"
+          aria-label="View student"
+          [outlined]="true"
+          (onClick)="goToView(student)"
+        />
+        <p-button
+          icon="pi pi-pencil"
+          aria-label="Edit student"
+          [outlined]="true"
+          (onClick)="goToEdit(student)"
+        />
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          [outlined]="true"
+          (onClick)="confirmDelete($event, student.id)"
+          aria-label="Confirm delete student"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmdialog />
+<p-toast />
