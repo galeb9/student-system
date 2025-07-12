@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
+import Aura from '@primeng/themes/aura';
 
 import Material from '@primeng/themes/material';
 
@@ -14,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       ripple: true,
       theme: {
-        preset: Material,
+        preset: Aura,
       },
     }),
   ],
