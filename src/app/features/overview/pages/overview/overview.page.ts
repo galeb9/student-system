@@ -72,6 +72,10 @@ export class OverviewPage {
     this.router.navigate(['/overview/new']);
   }
 
+  getOverflowCourses(student: Student): string {
+    return student.courses.slice(this.MAX_VISIBLE_COURSES).join(', ');
+  }
+
   onSave(student: Student) {
     this.studentService.save(student);
     this.students.set(this.studentService.getAll());
@@ -97,8 +101,7 @@ export class OverviewPage {
 
       accept: () => {
         this.studentService.delete(id);
-        // change this to filter out?
-        this.students.set(this.studentService.getAll());
+        this.students.update((prev) => prev.filter((s) => s.id !== id));
         this.messageService.add({
           severity: 'info',
           summary: 'Confirmed',
@@ -134,13 +137,14 @@ export class OverviewPage {
         outlined: true,
       },
       accept: () => {
+        const idsToDelete = new Set(selected.map((s) => s.id));
         selected.forEach((student) => {
           this.studentService.delete(student.id);
         });
-
-        this.students.set(this.studentService.getAll());
+        this.students.update((prev) =>
+          prev.filter((s) => !idsToDelete.has(s.id))
+        );
         this.selectedStudents.set([]);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Deleted',
@@ -155,12 +159,6 @@ export class OverviewPage {
         });
       },
     });
-  }
-
-  onRowSelect(event: any) {
-    console.log('clicked');
-    const selected = event.data; // the selected row object
-    console.log('Selected row:', selected);
   }
 
   // next() {

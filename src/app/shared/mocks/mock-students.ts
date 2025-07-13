@@ -5,7 +5,7 @@ export const MOCK_STUDENTS: Student[] = [
     id: 1,
     name: 'Jane Doe',
     email: 'jane@example.com',
-    courses: ['Math', 'Biology'],
+    courses: ['Math', 'Biology', 'History', 'Physics'],
   },
   {
     id: 2,

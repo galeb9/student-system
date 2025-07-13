@@ -66,20 +66,21 @@
         <td>{{ student.email }}</td>
         <!-- <td>{{ student.courses.join(', ') }}</td> -->
         <td>
-          <ng-container
-            *ngFor="let course of student.courses.slice(0, MAX_VISIBLE_COURSES)"
-          >
-            <p-chip [label]="course" class="mr-2" />
-          </ng-container>
+          <div class="flex flex-wrap gap-1">
+            <ng-container
+              *ngFor="let course of student.courses.slice(0, MAX_VISIBLE_COURSES)"
+            >
+              <p-chip [label]="course" />
+            </ng-container>
 
-          <ng-container *ngIf="student.courses.length > MAX_VISIBLE_COURSES">
-            <p-chip
-              [label]="'+' + (student.courses.length - MAX_VISIBLE_COURSES) + ' more'"
-              class="mr-2"
-              [pTooltip]="student.courses.slice(MAX_VISIBLE_COURSES).join(', ')"
-              tooltipPosition="top"
-            />
-          </ng-container>
+            <ng-container *ngIf="student.courses.length > MAX_VISIBLE_COURSES">
+              <p-chip
+                [label]="'+' + (student.courses.length - MAX_VISIBLE_COURSES) + ' more'"
+                [pTooltip]="getOverflowCourses(student)"
+                tooltipPosition="top"
+              />
+            </ng-container>
+          </div>
         </td>
 
         <td class="flex flex-row gap-3" (click)="$event.stopPropagation()">
