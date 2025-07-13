@@ -2,15 +2,21 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { ViewChild } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { TableFilterEvent, TableModule } from 'primeng/table';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -30,25 +36,33 @@ import { Student } from '../../../../core/models/student.model';
     CardModule,
     ChipModule,
     TooltipModule,
+    InputTextModule,
+    MultiSelectModule,
+    DropdownModule,
+    IconFieldModule,
+    InputIconModule,
   ],
   templateUrl: './overview.page.html',
   styleUrl: './overview.page.scss',
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService, ViewChild],
   standalone: true,
 })
 export class OverviewPage {
   readonly MAX_VISIBLE_COURSES = 2;
+  @ViewChild('dt') dt!: any;
+
   students = signal<Student[]>([]);
   selectedStudents = signal<Student[]>([]);
 
   displayDialog = signal(false);
   first: number = 0;
   rows: number = 20;
-  studentsCount = computed(() => this.students().length);
+  studentsCount = signal(0);
+
   deleteSelectedLabel = computed(() =>
     this.selectedStudents().length
-      ? `Delete Selected (${this.selectedStudents().length})`
-      : 'Delete Selected'
+      ? `Selected (${this.selectedStudents().length})`
+      : 'Delete'
   );
 
   constructor(
@@ -58,6 +72,17 @@ export class OverviewPage {
     private router: Router
   ) {
     this.students.set(this.studentService.getAll());
+    this.studentsCount.set(this.students().length);
+  }
+
+  onGlobalFilter(event: Event) {
+    const input = (event.target as HTMLInputElement).value;
+    this.dt.filterGlobal(input, 'contains');
+  }
+
+  onTableFilter(event: TableFilterEvent) {
+    const filtered = event.filteredValue ?? this.students();
+    this.studentsCount.set(filtered.length);
   }
 
   goToView(student: Student) {
@@ -75,13 +100,6 @@ export class OverviewPage {
   getOverflowCourses(student: Student): string {
     return student.courses.slice(this.MAX_VISIBLE_COURSES).join(', ');
   }
-
-  onSave(student: Student) {
-    this.studentService.save(student);
-    this.students.set(this.studentService.getAll());
-    this.displayDialog.set(false);
-  }
-
   confirmDelete(event: Event, id: number) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
@@ -160,30 +178,4 @@ export class OverviewPage {
       },
     });
   }
-
-  // next() {
-  //   this.first = this.first + this.rows;
-  // }
-
-  // prev() {
-  //   this.first = this.first - this.rows;
-  // }
-
-  // reset() {
-  //   this.first = 0;
-  // }
-  // pageChange(event: any) {
-  //   this.first = event.first;
-  //   this.rows = event.rows;
-  // }
-
-  // isLastPage(): boolean {
-  //   return this.students()
-  //     ? this.first + this.rows >= this.students().length
-  //     : true;
-  // }
-
-  // isFirstPage(): boolean {
-  //   return this.students().length ? this.first === 0 : true;
-  // }
 }

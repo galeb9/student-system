@@ -4,7 +4,18 @@
       <h1>Students overview</h1>
       <p-badge [value]="studentsCount()" badgeSize="xlarge" />
     </div>
-    <div>
+    <div class="flex flex-row align-items-center gap-3">
+      <p-iconfield iconPosition="left">
+        <p-inputicon>
+          <i class="pi pi-search"></i>
+        </p-inputicon>
+        <input
+          pInputText
+          type="text"
+          (input)="onGlobalFilter($event)"
+          placeholder="Search keyword..."
+        />
+      </p-iconfield>
       <p-button
         label="Add Student"
         icon="pi pi-plus"
@@ -16,44 +27,54 @@
         severity="danger"
         (click)="confirmBulkDelete($event)"
         [disabled]="!selectedStudents().length"
-        class="m-4"
       />
     </div>
   </div>
-  <!-- <div class="mb-4">
-    <p-button
-      type="button"
-      icon="pi pi-chevron-left"
-      (click)="prev()"
-      [disabled]="isFirstPage()"
-      text
-    />
-    <p-button type="button" icon="pi pi-refresh" (click)="reset()" text />
-    <p-button
-      type="button"
-      icon="pi pi-chevron-right"
-      (click)="next()"
-      [disabled]="isLastPage()"
-      text
-    />
-  </div> -->
+
   <p-table
+    #dt
+    dataKey="id"
     [value]="students()"
-    [paginator]="true"
     [rows]="rows"
+    [globalFilterFields]="['name', 'email', 'courses']"
+    [totalRecords]="studentsCount()"
     [selection]="selectedStudents()"
     (selectionChange)="selectedStudents.set($event)"
-    dataKey="id"
+    (onFilter)="onTableFilter($event)"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     emptyMessage="No students available."
     size="large"
     stripedRows
+    paginator
+    showCurrentPageReport
   >
     <ng-template pTemplate="header" #header>
       <tr>
         <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Courses</th>
+        <th>
+          <p-columnFilter
+            type="text"
+            field="name"
+            placeholder="Search by name"
+            ariaLabel="Filter Name"
+          ></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter
+            type="text"
+            field="email"
+            placeholder="Search by email"
+            ariaLabel="Filter Email"
+          ></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter
+            type="text"
+            field="courses"
+            placeholder="Search by course"
+            ariaLabel="Filter Courses"
+          ></p-columnFilter>
+        </th>
         <th>Actions</th>
       </tr>
     </ng-template>
