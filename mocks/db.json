@@ -1,0 +1,214 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "Jane",
+      "surname": "Doe",
+      "email": "jane@example.com",
+      "courses": ["Math", "Biology", "History", "Physics"]
+    },
+    {
+      "id": 2,
+      "name": "John",
+      "surname": "Smith",
+      "email": "john@example.com",
+      "courses": ["History"]
+    },
+    {
+      "id": 3,
+      "name": "Alice",
+      "surname": "Johnson",
+      "email": "alice@example.com",
+      "courses": ["Math"]
+    },
+    {
+      "id": 4,
+      "name": "Bob",
+      "surname": "Brown",
+      "email": "bob@example.com",
+      "courses": ["Biology"]
+    },
+    {
+      "id": 5,
+      "name": "Carol",
+      "surname": "White",
+      "email": "carol@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 6,
+      "name": "David",
+      "surname": "Green",
+      "email": "david@example.com",
+      "courses": ["Math", "Physics"]
+    },
+    {
+      "id": 7,
+      "name": "Eva",
+      "surname": "Black",
+      "email": "eva@example.com",
+      "courses": ["History", "Biology"]
+    },
+    {
+      "id": 8,
+      "name": "Frank",
+      "surname": "Gray",
+      "email": "frank@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 9,
+      "name": "Grace",
+      "surname": "Blue",
+      "email": "grace@example.com",
+      "courses": ["Biology"]
+    },
+    {
+      "id": 10,
+      "name": "Henry",
+      "surname": "Red",
+      "email": "henry@example.com",
+      "courses": ["History"]
+    },
+    {
+      "id": 11,
+      "name": "Isla",
+      "surname": "Gold",
+      "email": "isla@example.com",
+      "courses": ["Math"]
+    },
+    {
+      "id": 12,
+      "name": "Jack",
+      "surname": "Lime",
+      "email": "jack@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 13,
+      "name": "Kara",
+      "surname": "Cyan",
+      "email": "kara@example.com",
+      "courses": ["History"]
+    },
+    {
+      "id": 14,
+      "name": "Leo",
+      "surname": "Aqua",
+      "email": "leo@example.com",
+      "courses": ["Biology", "Math"]
+    },
+    {
+      "id": 15,
+      "name": "Mia",
+      "surname": "Violet",
+      "email": "mia@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 16,
+      "name": "Nina",
+      "surname": "Pink",
+      "email": "nina@example.com",
+      "courses": ["Math", "History"]
+    },
+    {
+      "id": 17,
+      "name": "Oscar",
+      "surname": "Teal",
+      "email": "oscar@example.com",
+      "courses": ["Biology"]
+    },
+    {
+      "id": 18,
+      "name": "Paula",
+      "surname": "Indigo",
+      "email": "paula@example.com",
+      "courses": ["Physics", "Math"]
+    },
+    {
+      "id": 19,
+      "name": "Quinn",
+      "surname": "Pearl",
+      "email": "quinn@example.com",
+      "courses": ["History"]
+    },
+    {
+      "id": 20,
+      "name": "Ryan",
+      "surname": "Amber",
+      "email": "ryan@example.com",
+      "courses": ["Math"]
+    },
+    {
+      "id": 21,
+      "name": "Sara",
+      "surname": "Coral",
+      "email": "sara@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 22,
+      "name": "Tom",
+      "surname": "Ruby",
+      "email": "tom@example.com",
+      "courses": ["Biology"]
+    },
+    {
+      "id": 23,
+      "name": "Uma",
+      "surname": "Jade",
+      "email": "uma@example.com",
+      "courses": ["Math", "History"]
+    },
+    {
+      "id": 24,
+      "name": "Viktor",
+      "surname": "Olive",
+      "email": "viktor@example.com",
+      "courses": ["Physics"]
+    },
+    {
+      "id": 25,
+      "name": "Wendy",
+      "surname": "Silver",
+      "email": "wendy@example.com",
+      "courses": ["Biology"]
+    },
+    {
+      "id": 26,
+      "name": "Xena",
+      "surname": "Bronze",
+      "email": "xena@example.com",
+      "courses": ["Math"]
+    },
+    {
+      "id": 27,
+      "name": "Yuri",
+      "surname": "Stone",
+      "email": "yuri@example.com",
+      "courses": ["History"]
+    },
+    {
+      "id": 28,
+      "name": "Zoe",
+      "surname": "Crystal",
+      "email": "zoe@example.com",
+      "courses": ["Physics", "Biology"]
+    },
+    {
+      "id": 29,
+      "name": "Aaron",
+      "surname": "Flame",
+      "email": "aaron@example.com",
+      "courses": ["Math"]
+    },
+    {
+      "id": 30,
+      "name": "Bella",
+      "surname": "Frost",
+      "email": "bella@example.com",
+      "courses": ["History"]
+    }
+  ]
+}

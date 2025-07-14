@@ -1,4 +1,4 @@
-<p-card [style]="{ margin: '100px 20px' }">
+<p-card [style]="{ margin: '100px 0' }">
   <div class="flex flex-row justify-content-between align-items-center gap-3">
     <div class="flex flex-row align-items-center gap-3">
       <h1>Students overview</h1>
@@ -36,14 +36,14 @@
     dataKey="id"
     [value]="students()"
     [rows]="rows"
-    [globalFilterFields]="['name', 'email', 'courses']"
+    [globalFilterFields]="['name', 'surname','email', 'courses']"
     [totalRecords]="studentsCount()"
     [selection]="selectedStudents()"
     (selectionChange)="selectedStudents.set($event)"
     (onFilter)="onTableFilter($event)"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     emptyMessage="No students available."
-    size="large"
+    size="small"
     stripedRows
     paginator
     showCurrentPageReport
@@ -57,6 +57,14 @@
             field="name"
             placeholder="Search by name"
             ariaLabel="Filter Name"
+          ></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter
+            type="text"
+            field="surname"
+            placeholder="Search by surname"
+            ariaLabel="Filter surname"
           ></p-columnFilter>
         </th>
         <th>
@@ -84,8 +92,8 @@
           <p-tableCheckbox [value]="student" />
         </td>
         <td>{{ student.name }}</td>
+        <td>{{ student.surname }}</td>
         <td>{{ student.email }}</td>
-        <!-- <td>{{ student.courses.join(', ') }}</td> -->
         <td>
           <div class="flex flex-wrap gap-1">
             <ng-container

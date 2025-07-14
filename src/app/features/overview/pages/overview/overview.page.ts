@@ -71,8 +71,10 @@ export class OverviewPage {
     private studentService: StudentService,
     private router: Router
   ) {
-    this.students.set(this.studentService.getAll());
-    this.studentsCount.set(this.students().length);
+    this.studentService.getAll().subscribe((data) => {
+      this.students.set(data);
+      this.studentsCount.set(data.length);
+    });
   }
 
   onGlobalFilter(event: Event) {

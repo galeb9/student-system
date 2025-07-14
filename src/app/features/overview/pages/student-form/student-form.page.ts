@@ -30,6 +30,7 @@ export class StudentFormPage {
   id = signal<number | null>(null);
   isEdit = computed(() => this.id() !== null);
   name = signal('');
+  surname = signal('');
   email = signal('');
   courses = signal<string[]>([]);
   allCourses = ['Math', 'Physics', 'History', 'Biology'];
@@ -41,6 +42,8 @@ export class StudentFormPage {
       if (student) {
         this.id.set(student.id);
         this.name.set(student.name);
+        this.surname.set(student.surname);
+
         this.email.set(student.email);
         this.courses.set([...student.courses]);
       }
@@ -51,6 +54,7 @@ export class StudentFormPage {
     const student: Student = {
       id: this.id() ?? Date.now(),
       name: this.name(),
+      surname: this.surname(),
       email: this.email(),
       courses: this.courses(),
     };
@@ -67,6 +71,13 @@ export class StudentFormPage {
   }
   set nameModel(value: string) {
     this.name.set(value);
+  }
+
+  get surnameModel() {
+    return this.surname();
+  }
+  set surnameModel(value: string) {
+    this.surname.set(value);
   }
 
   get emailModel() {
