@@ -66,7 +66,6 @@ export class OverviewPage implements OnInit {
   loadStudentsLazy(event: TableLazyLoadEvent) {
     this.first = event.first ?? 0;
     this.rows = event.rows ?? this.rows;
-    console.log(event);
 
     if (event.sortField) {
       const sf = Array.isArray(event.sortField)

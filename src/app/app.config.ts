@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-import Aura from '@primeng/themes/aura';
+import { ColorPreset } from './core/styles/color-preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +16,10 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       ripple: true,
       theme: {
-        preset: Aura,
+        preset: ColorPreset,
+        options: {
+          darkModeSelector: false || 'none',
+        },
       },
     }),
   ],
