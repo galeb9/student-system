@@ -1,17 +1,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-// * {
-//   margin: 0;
-//   padding: 0;
-//   box-sizing: border-box;
-// }
-
 body {
   font-family: "Roboto", sans-serif;
 }
 
-.paurus__main-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
+.paurus-main-container {
+  padding: 20px;
+}
+
+.overview {
+  .paurus-paginator {
+    flex-direction: row-reverse;
+    .p-paginator-current {
+      margin-right: auto;
+      order: 2;
+    }
+    .p-paginator-rpp-dropdown {
+      order: 1;
+    }
+  }
+
+  &-header th {
+    background-color: var(--p-primary-color) !important;
+    color: white !important;
+  }
+  .paurus-overview-table {
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+  }
 }
