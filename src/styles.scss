@@ -9,23 +9,22 @@ body {
 }
 
 .overview {
-  .paurus-paginator {
-    flex-direction: row-reverse;
-    .p-paginator-current {
-      margin-right: auto;
-      order: 2;
-    }
-    .p-paginator-rpp-dropdown {
-      order: 1;
-    }
-  }
-
-  &-header th {
-    background-color: var(--p-primary-color) !important;
-    color: white !important;
-  }
   .paurus-overview-table {
     border-collapse: separate;
     border-spacing: 0 1rem;
+    th {
+      background-color: var(--p-primary-color);
+      color: white;
+    }
+    .paurus-paginator {
+      flex-direction: row-reverse;
+      .p-paginator-current {
+        margin-right: auto;
+        order: 2;
+      }
+      .p-paginator-rpp-dropdown {
+        order: 1;
+      }
+    }
   }
 }

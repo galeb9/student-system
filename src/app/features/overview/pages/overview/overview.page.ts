@@ -16,6 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { StudentService } from '../../../../core/services/student.service';
 import { Student } from '../../../../core/models/student.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-overview',
@@ -64,6 +65,7 @@ export class OverviewPage implements OnInit {
   ) {}
 
   loadStudentsLazy(event: TableLazyLoadEvent) {
+    this.loading = true;
     this.first = event.first ?? 0;
     this.rows = event.rows ?? this.rows;
 
@@ -83,6 +85,7 @@ export class OverviewPage implements OnInit {
 
     this.studentService
       .getPaginated(pageIndex, this.rows, this.sortField, this.sortOrder)
+      .pipe(finalize(() => (this.loading = false)))
       .subscribe(({ data, total }) => {
         this.students.set(data);
         this.studentsCount.set(total);
