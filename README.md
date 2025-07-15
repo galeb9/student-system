@@ -22,3 +22,9 @@ A demo student CRUD app with lazy-loaded table, pagination, global & column filt
    ```bash
    npm install
    ```
+
+3. **Run concurrently**
+
+   ```bash
+   npm run dev
+   ```
