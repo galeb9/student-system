@@ -25,13 +25,6 @@ export const routes: Routes = [
             './features/overview/pages/student-form/student-form.page'
           ).then((m) => m.StudentFormPage),
       },
-      {
-        path: ':id/view',
-        loadComponent: () =>
-          import(
-            './features/overview/pages/student-view/student-view/student-view.page'
-          ).then((m) => m.StudentViewPage),
-      },
     ],
   },
   { path: '', redirectTo: 'overview', pathMatch: 'full' },
