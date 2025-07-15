@@ -1,4 +1,3 @@
-// src/app/features/overview/pages/overview/overview.page.ts
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { signal, computed } from '@angular/core';
@@ -92,9 +91,6 @@ export class OverviewPage implements OnInit {
       });
   }
 
-  goToView(s: Student) {
-    this.router.navigate([`/overview/${s.id}/view`]);
-  }
   goToEdit(s: Student) {
     this.router.navigate([`/overview/${s.id}/edit`]);
   }

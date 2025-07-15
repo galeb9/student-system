@@ -1,4 +1,3 @@
-// src/app/features/overview/pages/student-form/student-form.page.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -88,7 +87,7 @@ export class StudentFormPage implements OnInit {
         { value: '', disabled: this.isEdit },
         [Validators.required, Validators.email],
       ],
-      courses: [<string[]>[], Validators.required], // stays enabled
+      courses: [<string[]>[], Validators.required],
     });
 
     if (this.isEdit && this.studentId) {
@@ -116,10 +115,8 @@ export class StudentFormPage implements OnInit {
     let op$: Observable<Student>;
 
     if (this.isEdit && this.studentId) {
-      // PATCH only the courses field
       op$ = this.studentService.patch(this.studentId, { courses });
     } else {
-      // CREATE a brand new student
       const newStudent: Omit<Student, 'id'> = {
         name: raw.name,
         surname: raw.surname,

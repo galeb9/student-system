@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotFoundPage } from './features/not-found/not-found/not-found.page';
 
 export const routes: Routes = [
   {
@@ -28,5 +29,5 @@ export const routes: Routes = [
     ],
   },
   { path: '', redirectTo: 'overview', pathMatch: 'full' },
-  { path: '**', redirectTo: 'overview' },
+  { path: '**', component: NotFoundPage },
 ];
