@@ -48,7 +48,23 @@ export class StudentFormPage implements OnInit {
   ) {}
   form!: FormGroup;
   isEdit = false;
-  allCourses = ['Math', 'Physics', 'History', 'Biology'];
+  allCourses = [
+    'Math',
+    'Physics',
+    'History',
+    'Biology',
+    'Chemistry',
+    'English Literature',
+    'Computer Science',
+    'Art',
+    'Music',
+    'Economics',
+    'Geography',
+    'Physical Education',
+    'Philosophy',
+    'Psychology',
+    'Sociology',
+  ];
   courseOptions: Option[] = [];
   studentId: string | null = null;
 
