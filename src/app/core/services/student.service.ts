@@ -23,10 +23,12 @@ export class StudentService {
     return this.http.get<Student>(`${this.baseUrl}/${id}`);
   }
 
-  save(student: Student): Observable<Student> {
-    return student.id
-      ? this.http.put<Student>(`${this.baseUrl}/${student.id}`, student)
-      : this.http.post<Student>(this.baseUrl, student);
+  create(student: Omit<Student, 'id'>): Observable<Student> {
+    return this.http.post<Student>(this.baseUrl, student);
+  }
+
+  patch(id: string, changes: Partial<Student>): Observable<Student> {
+    return this.http.patch<Student>(`${this.baseUrl}/${id}`, changes);
   }
 
   delete(id: string): Observable<void> {

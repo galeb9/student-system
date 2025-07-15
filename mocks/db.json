@@ -18,7 +18,9 @@
       "email": "student11@example.com",
       "courses": [
         "Math",
-        "History"
+        "History",
+        "Physics",
+        "Biology"
       ]
     },
     {
@@ -845,32 +847,13 @@
       ]
     },
     {
-      "id": "99",
-      "name": "Student99",
-      "surname": "Surname99",
-      "email": "student99@example.com",
-      "courses": [
-        "History"
-      ]
-    },
-    {
-      "id": "100",
-      "name": "Student100",
-      "surname": "Surname100",
-      "email": "student100@example.com",
-      "courses": [
-        "Physics",
-        "Biology"
-      ]
-    },
-    {
-      "id": "0bd9",
+      "id": "d350",
       "name": "test",
-      "surname": "ste",
+      "surname": "test",
       "email": "test@gmail.com",
       "courses": [
         "Math",
-        "Physics",
+        "History",
         "Biology"
       ]
     }

@@ -18,6 +18,7 @@ import { CardModule } from 'primeng/card';
 
 import { StudentService } from '../../../../core/services/student.service';
 import { Student } from '../../../../core/models/student.model';
+import { Observable } from 'rxjs';
 
 type Option = { label: string; value: string };
 
@@ -49,9 +50,11 @@ export class StudentFormPage implements OnInit {
   isEdit = false;
   allCourses = ['Math', 'Physics', 'History', 'Biology'];
   courseOptions: Option[] = [];
+  studentId: string | null = null;
 
   ngOnInit(): void {
     const param = this.route.snapshot.paramMap.get('id');
+    this.studentId = param || null;
     this.isEdit = !!param;
 
     this.courseOptions = this.allCourses.map((c) => ({ label: c, value: c }));
@@ -72,9 +75,8 @@ export class StudentFormPage implements OnInit {
       courses: [<string[]>[], Validators.required], // stays enabled
     });
 
-    if (param) {
-      const id = param;
-      this.studentService.getById(id).subscribe({
+    if (this.isEdit && this.studentId) {
+      this.studentService.getById(this.studentId).subscribe({
         next: (student) => this.form.patchValue(student),
         error: () =>
           this.messageService.add({
@@ -93,29 +95,42 @@ export class StudentFormPage implements OnInit {
     }
 
     const raw = this.form.getRawValue();
+    const courses = raw.courses as string[];
 
-    const student: Student = {
-      ...raw,
-      id: this.route.snapshot.paramMap.has('id')
-        ? +this.route.snapshot.paramMap.get('id')!
-        : undefined,
-    };
+    let op$: Observable<Student>;
 
-    this.studentService.save(student).subscribe({
+    if (this.isEdit && this.studentId) {
+      // PATCH only the courses field
+      op$ = this.studentService.patch(this.studentId, { courses });
+    } else {
+      // CREATE a brand new student
+      const newStudent: Omit<Student, 'id'> = {
+        name: raw.name,
+        surname: raw.surname,
+        email: raw.email,
+        courses,
+      };
+      op$ = this.studentService.create(newStudent);
+    }
+
+    op$.subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: student.id ? 'Updated' : 'Created',
-          detail: `Student ${student.id ? 'updated' : 'created'} successfully.`,
+          summary: this.isEdit ? 'Updated' : 'Created',
+          detail: `Student ${
+            this.isEdit ? 'updated' : 'created'
+          } successfully.`,
         });
         this.router.navigate(['/overview']);
       },
-      error: () =>
+      error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Save Error',
           detail: 'Could not save student.',
-        }),
+        });
+      },
     });
   }
 }

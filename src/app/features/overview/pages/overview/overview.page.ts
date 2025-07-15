@@ -128,7 +128,7 @@ export class OverviewPage implements OnInit {
       accept: () => {
         import('rxjs').then(({ forkJoin }) => {
           forkJoin(
-            toDelete.map((s) => this.studentService.delete(s.id))
+            toDelete.map((s) => this.studentService.delete(s.id!))
           ).subscribe(() => {
             this.selectedStudents.set([]);
             this.messageService.add({
