@@ -1,96 +1,121 @@
+// src/app/features/overview/pages/student-form/student-form.page.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
 
 import { StudentService } from '../../../../core/services/student.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Student } from '../../../../core/models/student.model';
+
+type Option = { label: string; value: string };
 
 @Component({
   selector: 'app-student-form',
+  standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     InputTextModule,
     MultiSelectModule,
     ButtonModule,
+    ToastModule,
+    CardModule,
   ],
+  providers: [MessageService],
   templateUrl: './student-form.page.html',
-  styleUrl: './student-form.page.scss',
+  styleUrls: ['./student-form.page.scss'],
 })
-export class StudentFormPage {
-  private studentService = inject(StudentService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-
-  id = signal<number | null>(null);
-  isEdit = computed(() => this.id() !== null);
-  name = signal('');
-  surname = signal('');
-  email = signal('');
-  courses = signal<string[]>([]);
+export class StudentFormPage implements OnInit {
+  constructor(
+    private fb: FormBuilder,
+    private studentService: StudentService,
+    public route: ActivatedRoute,
+    public router: Router,
+    private messageService: MessageService
+  ) {}
+  form!: FormGroup;
+  isEdit = false;
   allCourses = ['Math', 'Physics', 'History', 'Biology'];
+  courseOptions: Option[] = [];
 
-  constructor() {
-    const paramId = this.route.snapshot.paramMap.get('id');
-    if (paramId) {
-      const student = this.studentService.getById(+paramId);
-      if (student) {
-        this.id.set(student.id);
-        this.name.set(student.name);
-        this.surname.set(student.surname);
+  ngOnInit(): void {
+    const param = this.route.snapshot.paramMap.get('id');
+    this.isEdit = !!param;
 
-        this.email.set(student.email);
-        this.courses.set([...student.courses]);
-      }
+    this.courseOptions = this.allCourses.map((c) => ({ label: c, value: c }));
+
+    this.form = this.fb.group({
+      name: [
+        { value: '', disabled: this.isEdit },
+        [Validators.required, Validators.minLength(2)],
+      ],
+      surname: [
+        { value: '', disabled: this.isEdit },
+        [Validators.required, Validators.minLength(2)],
+      ],
+      email: [
+        { value: '', disabled: this.isEdit },
+        [Validators.required, Validators.email],
+      ],
+      courses: [<string[]>[], Validators.required], // stays enabled
+    });
+
+    if (param) {
+      const id = param;
+      this.studentService.getById(id).subscribe({
+        next: (student) => this.form.patchValue(student),
+        error: () =>
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Load Error',
+            detail: 'Could not load student data.',
+          }),
+      });
     }
   }
 
-  save() {
+  save(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.form.getRawValue();
+
     const student: Student = {
-      id: this.id() ?? Date.now(),
-      name: this.name(),
-      surname: this.surname(),
-      email: this.email(),
-      courses: this.courses(),
+      ...raw,
+      id: this.route.snapshot.paramMap.has('id')
+        ? +this.route.snapshot.paramMap.get('id')!
+        : undefined,
     };
-    this.studentService.save(student);
-    this.goToList();
-  }
 
-  goToList() {
-    this.router.navigate(['/overview']);
-  }
-
-  get nameModel() {
-    return this.name();
-  }
-  set nameModel(value: string) {
-    this.name.set(value);
-  }
-
-  get surnameModel() {
-    return this.surname();
-  }
-  set surnameModel(value: string) {
-    this.surname.set(value);
-  }
-
-  get emailModel() {
-    return this.email();
-  }
-  set emailModel(value: string) {
-    this.email.set(value);
-  }
-
-  get coursesModel() {
-    return this.courses();
-  }
-  set coursesModel(value: string[]) {
-    this.courses.set(value);
+    this.studentService.save(student).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: student.id ? 'Updated' : 'Created',
+          detail: `Student ${student.id ? 'updated' : 'created'} successfully.`,
+        });
+        this.router.navigate(['/overview']);
+      },
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Save Error',
+          detail: 'Could not save student.',
+        }),
+    });
   }
 }

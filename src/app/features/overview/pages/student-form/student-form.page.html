@@ -1,30 +1,111 @@
-<div class="p-fluid">
-  <h2>{{ isEdit() ? 'Edit Student' : 'New Student' }}</h2>
+<p-card>
+  <form [formGroup]="form" (ngSubmit)="save()" class="p-fluid">
+    <h2>{{ route.snapshot.paramMap.has('id') ? 'Edit' : 'New' }} Student</h2>
 
-  <div class="field">
-    <label for="name">Name</label>
-    <input pInputText id="name" [(ngModel)]="nameModel" />
-  </div>
+    <div class="formgrid grid">
+      <!-- Name -->
+      <div class="field col">
+        <label for="name">Name</label>
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          class="w-full p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary"
+        />
+        <small
+          *ngIf="form.controls['name'].invalid && form.controls['name'].touched"
+          class="p-error"
+        >
+          <span *ngIf="form.controls['name'].errors?.['required']">
+            Name is required.
+          </span>
+          <span *ngIf="form.controls['name'].errors?.['minlength']">
+            Minimum 2 characters.
+          </span>
+        </small>
+      </div>
 
-  <div class="field">
-    <label for="surname">Surname</label>
-    <input pInputText id="surname" [(ngModel)]="surnameModel" />
-  </div>
+      <!-- Surname -->
+      <div class="field col">
+        <label for="surname">Surname</label>
+        <input
+          pInputText
+          id="surname"
+          formControlName="surname"
+          class="w-full p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary"
+        />
+        <small
+          *ngIf="form.controls['surname'].invalid && form.controls['surname'].touched"
+          class="p-error"
+        >
+          <span *ngIf="form.controls['surname'].errors?.['required']">
+            Surname is required.
+          </span>
+          <span *ngIf="form.controls['surname'].errors?.['minlength']">
+            Minimum 2 characters.
+          </span>
+        </small>
+      </div>
 
-  <div class="field">
-    <label for="email">Email</label>
-    <input pInputText id="email" [(ngModel)]="emailModel" />
-  </div>
+      <!-- Email -->
+      <div class="field col">
+        <label for="email">Email</label>
+        <input
+          pInputText
+          id="email"
+          formControlName="email"
+          class="w-full p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary"
+        />
+        <small
+          *ngIf="form.controls['email'].invalid && form.controls['email'].touched"
+          class="p-error"
+        >
+          <span *ngIf="form.controls['email'].errors?.['required']">
+            Email is required.
+          </span>
+          <span *ngIf="form.controls['email'].errors?.['email']">
+            Must be a valid email.
+          </span>
+        </small>
+      </div>
+    </div>
 
-  <div class="field">
-    <label for="courses">Courses</label>
-    <p-multiSelect [options]="allCourses" [(ngModel)]="coursesModel" />
-  </div>
+    <div class="flex justify-content-between align-items-end gap-3 flex-wrap">
+      <div>
+        <div class="flex align-items-center gap-3">
+          <label for="courses">Courses</label>
+          <p-multiSelect
+            id="courses"
+            formControlName="courses"
+            [options]="courseOptions"
+            defaultLabel="Select courses"
+          ></p-multiSelect>
+        </div>
+        <small
+          *ngIf="form.controls['courses'].invalid && form.controls['courses'].touched"
+          class="p-error"
+        >
+          Select at least one course.
+        </small>
+      </div>
 
-  <div class="flex gap-2 mt-3">
-    <button pButton type="button" label="Save" (click)="save()"></button>
-    <a pButton type="button" (click)="goToList()" class="p-button-secondary"
-      >Cancel</a
-    >
-  </div>
-</div>
+      <div class="flex gap-3 mt-3">
+        <button
+          pButton
+          type="submit"
+          label="Save"
+          [disabled]="form.invalid"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          class="p-button-secondary"
+          (click)="router.navigate(['/overview'])"
+        ></button>
+      </div>
+    </div>
+  </form>
+</p-card>
+
+<p-toast></p-toast>
