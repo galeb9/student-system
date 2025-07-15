@@ -1,32 +1,74 @@
+// src/app/core/services/student.service.ts
 import { Injectable } from '@angular/core';
-import { Student } from '../models/student.model';
-import { MOCK_STUDENTS } from '../../shared/mocks/mock-students';
-import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { Student } from '../models/student.model';
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {
-  private students: Student[] = [...MOCK_STUDENTS];
   private baseUrl = '/api/students';
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Student[]> {
-    console.log('Fapening');
     return this.http.get<Student[]>(this.baseUrl);
   }
 
-  getById(id: number): Student | undefined {
-    return this.students.find((s) => s.id === id);
+  getById(id: string): Observable<Student> {
+    return this.http.get<Student>(`${this.baseUrl}/${id}`);
   }
 
-  save(student: Student): void {
-    const index = this.students.findIndex((s) => s.id === student.id);
-    if (index > -1) this.students[index] = student;
-    else this.students.push(student);
+  save(student: Student): Observable<Student> {
+    return student.id
+      ? this.http.put<Student>(`${this.baseUrl}/${student.id}`, student)
+      : this.http.post<Student>(this.baseUrl, student);
   }
 
-  delete(id: number): void {
-    this.students = this.students.filter((s) => s.id !== id);
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getPaginated(
+    pageIndex: number,
+    pageSize: number,
+    sortField?: string,
+    sortOrder: number = 1
+  ): Observable<PaginatedResult<Student>> {
+    const start = pageIndex * pageSize;
+    const end = start + pageSize;
+
+    return this.getAll().pipe(
+      map((all) => {
+        let data = all;
+
+        if (sortField) {
+          data = [...data].sort((a, b) => {
+            const aVal = (a as any)[sortField];
+            const bVal = (b as any)[sortField];
+
+            if (aVal == null && bVal != null) return -1 * sortOrder;
+            if (aVal != null && bVal == null) return 1 * sortOrder;
+            if (aVal == null && bVal == null) return 0;
+
+            if (typeof aVal === 'number' && typeof bVal === 'number') {
+              return (aVal - bVal) * sortOrder;
+            }
+
+            return String(aVal).localeCompare(String(bVal)) * sortOrder;
+          });
+        }
+
+        const slice = data.slice(start, end);
+        return {
+          data: slice,
+          total: all.length,
+        };
+      })
+    );
   }
 }

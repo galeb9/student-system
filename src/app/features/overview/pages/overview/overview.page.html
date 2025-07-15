@@ -1,26 +1,11 @@
-<p-card [style]="{ margin: '100px 0' }">
-  <div class="flex flex-row justify-content-between align-items-center gap-3">
-    <div class="flex flex-row align-items-center gap-3">
-      <h1>Students overview</h1>
+<div class="overview">
+  <div class="flex justify-content-between align-items-center mb-2">
+    <div class="flex align-items-center gap-2">
+      <h2>Students overview</h2>
       <p-badge [value]="studentsCount()" badgeSize="xlarge" />
     </div>
-    <div class="flex flex-row align-items-center gap-3">
-      <p-iconfield iconPosition="left">
-        <p-inputicon>
-          <i class="pi pi-search"></i>
-        </p-inputicon>
-        <input
-          pInputText
-          type="text"
-          (input)="onGlobalFilter($event)"
-          placeholder="Search keyword..."
-        />
-      </p-iconfield>
-      <p-button
-        label="Add Student"
-        icon="pi pi-plus"
-        (onClick)="goToMakeNew()"
-      />
+    <div class="flex align-items-center gap-3">
+      <p-button label="Add Student" icon="pi pi-plus" (click)="goToMakeNew()" />
       <p-button
         [label]="deleteSelectedLabel()"
         icon="pi pi-trash"
@@ -33,62 +18,45 @@
 
   <p-table
     #dt
-    dataKey="id"
-    [value]="students()"
-    [rows]="rows"
-    [globalFilterFields]="['name', 'surname','email', 'courses']"
-    [totalRecords]="studentsCount()"
+    [lazy]="true"
+    (onLazyLoad)="loadStudentsLazy($event)"
     [selection]="selectedStudents()"
     (selectionChange)="selectedStudents.set($event)"
-    (onFilter)="onTableFilter($event)"
+    [value]="students()"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="studentsCount()"
+    [rowsPerPageOptions]="[10,20,50,100]"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [sortField]="sortField"
+    [sortOrder]="sortOrder"
+    dataKey="id"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    emptyMessage="No students available."
-    size="small"
-    stripedRows
+    paginatorStyleClass="paurus-paginator shadow-2 mt-4"
+    tableStyleClass="paurus-overview-table mx-1 "
     paginator
     showCurrentPageReport
+    rowHover
+    stripedRows
   >
-    <ng-template pTemplate="header" #header>
-      <tr>
-        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-        <th>
-          <p-columnFilter
-            type="text"
-            field="name"
-            placeholder="Search by name"
-            ariaLabel="Filter Name"
-          ></p-columnFilter>
+    <ng-template #header pTemplate="header">
+      <tr class="overview-header shadow-2 border-round-lg">
+        <th class="border-round-left-lg" style="width: 1rem">
+          <p-tableHeaderCheckbox />
         </th>
-        <th>
-          <p-columnFilter
-            type="text"
-            field="surname"
-            placeholder="Search by surname"
-            ariaLabel="Filter surname"
-          ></p-columnFilter>
+        <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+        <th pSortableColumn="surname">
+          Surname <p-sortIcon field="surname" />
         </th>
-        <th>
-          <p-columnFilter
-            type="text"
-            field="email"
-            placeholder="Search by email"
-            ariaLabel="Filter Email"
-          ></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter
-            type="text"
-            field="courses"
-            placeholder="Search by course"
-            ariaLabel="Filter Courses"
-          ></p-columnFilter>
-        </th>
-        <th>Actions</th>
+        <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+        <th>Courses</th>
+        <th class="border-round-right-lg text-right pr-4">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-student>
-      <tr (click)="goToView(student)" style="cursor: pointer">
-        <td td (click)="$event.stopPropagation()">
+
+    <ng-template #body let-student pTemplate="body">
+      <tr class="shadow-2 border-round-lg">
+        <td (click)="$event.stopPropagation()" class="border-round-left-lg">
           <p-tableCheckbox [value]="student" />
         </td>
         <td>{{ student.name }}</td>
@@ -96,40 +64,33 @@
         <td>{{ student.email }}</td>
         <td>
           <div class="flex flex-wrap gap-1">
-            <ng-container
-              *ngFor="let course of student.courses.slice(0, MAX_VISIBLE_COURSES)"
-            >
-              <p-chip [label]="course" />
-            </ng-container>
-
-            <ng-container *ngIf="student.courses.length > MAX_VISIBLE_COURSES">
-              <p-chip
-                [label]="'+' + (student.courses.length - MAX_VISIBLE_COURSES) + ' more'"
-                [pTooltip]="getOverflowCourses(student)"
-                tooltipPosition="top"
-              />
+            <ng-container *ngFor="let c of student.courses">
+              <p-chip [label]="c" />
             </ng-container>
           </div>
         </td>
-
-        <td class="flex flex-row gap-3" (click)="$event.stopPropagation()">
-          <p-button
-            icon="pi pi-pencil"
-            aria-label="Edit student"
-            [outlined]="true"
-          />
+        <td
+          class="flex gap-2 border-round-right-lg justify-content-end"
+          (click)="$event.stopPropagation()"
+        >
+          <p-button icon="pi pi-pencil" outlined (click)="goToEdit(student)" />
           <p-button
             icon="pi pi-trash"
             severity="danger"
-            [outlined]="true"
-            (onClick)="confirmDelete($event, student.id)"
-            aria-label="Confirm delete student"
+            class="pr-2"
+            outlined
+            (click)="confirmDelete($event, student.id)"
           />
         </td>
       </tr>
     </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5">No customers found.</td>
+      </tr>
+    </ng-template>
   </p-table>
-</p-card>
+</div>
 
 <p-confirmdialog />
 <p-toast />

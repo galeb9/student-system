@@ -1,181 +1,144 @@
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Component, computed, signal } from '@angular/core';
+// src/app/features/overview/pages/overview/overview.page.ts
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ViewChild } from '@angular/core';
+import { signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
+import { TableModule, Table, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { TableFilterEvent, TableModule } from 'primeng/table';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
-import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { DropdownModule } from 'primeng/dropdown';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
-
 import { StudentService } from '../../../../core/services/student.service';
 import { Student } from '../../../../core/models/student.model';
 
 @Component({
   selector: 'app-overview',
+  standalone: true,
   imports: [
-    CommonModule,
     TableModule,
     ButtonModule,
-    FormsModule,
-    BadgeModule,
     ConfirmDialog,
     ToastModule,
+    BadgeModule,
     CardModule,
     ChipModule,
-    TooltipModule,
     InputTextModule,
-    MultiSelectModule,
-    DropdownModule,
-    IconFieldModule,
-    InputIconModule,
+    CommonModule,
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './overview.page.html',
-  styleUrl: './overview.page.scss',
-  providers: [ConfirmationService, MessageService, ViewChild],
-  standalone: true,
+  styleUrls: ['./overview.page.scss'],
 })
-export class OverviewPage {
-  readonly MAX_VISIBLE_COURSES = 2;
-  @ViewChild('dt') dt!: any;
-
+export class OverviewPage implements OnInit {
+  @ViewChild('dt', { static: true }) dt!: Table;
   students = signal<Student[]>([]);
+  studentsCount = signal(0);
   selectedStudents = signal<Student[]>([]);
-
-  displayDialog = signal(false);
+  filterText = signal('');
   first: number = 0;
   rows: number = 20;
-  studentsCount = signal(0);
+  sortField: string = 'surname';
+  sortOrder: number = 1;
+  loading: boolean = true;
 
-  deleteSelectedLabel = computed(() =>
-    this.selectedStudents().length
-      ? `Selected (${this.selectedStudents().length})`
-      : 'Delete'
-  );
+  deleteSelectedLabel = computed(() => {
+    const n = this.selectedStudents().length;
+    return n ? `Selected (${n})` : 'Delete Selected';
+  });
+
+  ngOnInit(): void {
+    this.dt.reset();
+  }
 
   constructor(
+    private studentService: StudentService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private studentService: StudentService,
     private router: Router
-  ) {
-    this.studentService.getAll().subscribe((data) => {
-      this.students.set(data);
-      this.studentsCount.set(data.length);
-    });
+  ) {}
+
+  loadStudentsLazy(event: TableLazyLoadEvent) {
+    this.first = event.first ?? 0;
+    this.rows = event.rows ?? this.rows;
+    console.log(event);
+
+    if (event.sortField) {
+      const sf = Array.isArray(event.sortField)
+        ? event.sortField[0]
+        : event.sortField;
+
+      this.sortField = sf;
+    }
+
+    if (event.sortOrder != null) {
+      this.sortOrder = event.sortOrder;
+    }
+
+    const pageIndex = this.first / this.rows;
+
+    this.studentService
+      .getPaginated(pageIndex, this.rows, this.sortField, this.sortOrder)
+      .subscribe(({ data, total }) => {
+        this.students.set(data);
+        this.studentsCount.set(total);
+      });
   }
 
-  onGlobalFilter(event: Event) {
-    const input = (event.target as HTMLInputElement).value;
-    this.dt.filterGlobal(input, 'contains');
+  goToView(s: Student) {
+    this.router.navigate([`/overview/${s.id}/view`]);
   }
-
-  onTableFilter(event: TableFilterEvent) {
-    const filtered = event.filteredValue ?? this.students();
-    this.studentsCount.set(filtered.length);
+  goToEdit(s: Student) {
+    this.router.navigate([`/overview/${s.id}/edit`]);
   }
-
-  goToView(student: Student) {
-    this.router.navigate([`/overview/${student.id}/view`]);
-  }
-
-  goToEdit(student: Student) {
-    this.router.navigate([`/overview/${student.id}/edit`]);
-  }
-
   goToMakeNew() {
     this.router.navigate(['/overview/new']);
   }
 
-  getOverflowCourses(student: Student): string {
-    return student.courses.slice(this.MAX_VISIBLE_COURSES).join(', ');
-  }
-  confirmDelete(event: Event, id: number) {
+  confirmDelete(event: Event, id: string) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Do you want to delete this student?',
-      header: 'Danger Zone',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Delete',
-        severity: 'danger',
-      },
-
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.studentService.delete(id);
-        this.students.update((prev) => prev.filter((s) => s.id !== id));
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmed',
-          detail: 'Record deleted',
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejected',
-          detail: 'You have rejected',
+        this.studentService.delete(id).subscribe(() => {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Deleted',
+            detail: 'Student removed',
+          });
+          this.dt.reset();
         });
       },
     });
   }
-  confirmBulkDelete(event: Event) {
-    const selected = this.selectedStudents();
-    console.log(selected);
-    if (!selected.length) return;
 
+  confirmBulkDelete(event: Event) {
+    const toDelete = this.selectedStudents();
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: `Delete ${selected.length} student(s)?`,
-      header: 'Confirm Bulk Delete',
+      message: `Delete ${toDelete.length} selected student(s)?`,
+      header: 'Bulk Delete',
       icon: 'pi pi-exclamation-triangle',
-      acceptButtonProps: {
-        label: 'Delete',
-        severity: 'danger',
-      },
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
       accept: () => {
-        const idsToDelete = new Set(selected.map((s) => s.id));
-        selected.forEach((student) => {
-          this.studentService.delete(student.id);
-        });
-        this.students.update((prev) =>
-          prev.filter((s) => !idsToDelete.has(s.id))
-        );
-        this.selectedStudents.set([]);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Deleted',
-          detail: `${selected.length} student(s) deleted.`,
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Cancelled',
-          detail: 'Bulk deletion cancelled.',
+        import('rxjs').then(({ forkJoin }) => {
+          forkJoin(
+            toDelete.map((s) => this.studentService.delete(s.id))
+          ).subscribe(() => {
+            this.selectedStudents.set([]);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Deleted',
+              detail: `${toDelete.length} removed`,
+            });
+            this.dt.reset();
+          });
         });
       },
     });
